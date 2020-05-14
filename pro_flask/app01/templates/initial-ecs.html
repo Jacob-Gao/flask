@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="author" content="jacob">
+    <title>index</title>
+    <!-- Bootstrap core CSS -->
+    <link href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <h3 class="panel-title">初始化部署ECS</h3>
+    </div>
+    <div class="panel-body">
+
+
+        <form class="form-horizontal" method="post">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">运行如下命令执行脚本,多个机器的ip以空格隔开</label>
+                <div class="col-sm-9">
+                    <input type="text" name="ip_address" class="form-control"
+                           placeholder="192.168.1.1   192.168.1.2   192.16.1.3">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-10">
+                    <button type="submit" class="btn btn-default">开始部署</button>
+                </div>
+            </div>
+
+            <label class="col-sm-2 control-label">运维服务器的日志</label>
+            <div class="form-group">
+                   <textarea class="form-control" rows="10">请停在页面等待日志生成
+                       {{ yunwei_log }}</textarea>
+            </div>
+
+            <label class="col-sm-2 control-label">目标服务器的日志</label>
+            <div class="form-group">
+                   <textarea class="form-control" rows="10">请停在页面等待日志生成
+                       {{ target_machine_log }}</textarea>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/plugins/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+</body>
+</html>
