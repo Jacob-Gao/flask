@@ -39,6 +39,12 @@ def work_loop(y_host, y_user, y_passwd, host, t_user, t_passwd):
         command=
         '/bin/bash /root/copy_jdk_shell/copy_initial_shell.sh {} > /root/copy_jdk_shell/copy_initial_shell.log 2>&1'
             .format(host))  # yunwei machine log
+
+    excute_command(
+        client=client,
+        command=
+        '/usr/bin/expect /root/copy_jdk_shell/id_rsa.sh {} > /root/copy_jdk_shell/copy_initial_shell.log 2>&1'
+            .format(host))
     client.close()
     # excute initial.sh
     client = connect_to_remote_host(hostip=host,
