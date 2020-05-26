@@ -21,12 +21,9 @@ def excute_command(client, command):
     try:
         stdin, stdout, stderr = client.exec_command(command)
 
-    except:
-        err = stderr.read().decode('utf-8')
-        print(err)
+    except Exception as e:
         client.close()
-        exit(1)
-        return err
+        return e
     else:
         standout = stdout.read().decode('utf-8')
         return standout

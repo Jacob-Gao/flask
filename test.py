@@ -11,13 +11,35 @@ def connect_to_remote_host(hostip, username='root', password='jacob'):
         paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
     try:
         client.connect(hostname=hostip, username=username, password=password, timeout=5)
-        for i in range(10):
-            print(i)
-            time.sleep(1)
-
         return client
     except Exception as e:
         print("连接服务器失败，错误信息：{}".format(e))
         sys.exit()
 
 
+def excute_command(client, command):
+    try:
+        stdin, stdout, stderr = client.exec_command(command)
+    except Exception as e:
+        client.close()
+        return e
+    else:
+        standout = stdout.read().decode('utf-8')
+        return standout
+
+def work():
+    client = connect_to_remote_host('192.168.1.252')
+    sftp = client.open_sftp()
+    try:
+        sftp.stat('/data/tinyplat/')
+        print("*"*100)
+        print("机器已经初始化过了，很有可能正在生产环境使用，请检查ip是否输入正确,ip地址为{}".format(hostlist[0]))
+        print("*"*100)
+        client.close()
+        sys.exit()
+    except Exception as e:
+        print('执行初始化',e)
+        client.close()
+
+
+work()
