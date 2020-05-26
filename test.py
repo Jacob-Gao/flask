@@ -1,26 +1,23 @@
 import paramiko
+import sys,threading,time
 
+hostlist=['192.168.1.1', '192.168.1.252']
 
-#
-# # 实例化一个transport对象
-# trans = paramiko.Transport(('192.168.1.252', 22))
-# # 建立连接
-# trans.connect(username='root', password='jacob')
-#
-# # 将sshclient的对象的transport指定为以上的trans
-# ssh = paramiko.SSHClient()
-# ssh._transport = trans
-# # 执行命令，和传统方法一样
-# stdin, stdout, stderr = ssh.exec_command('cd /root/shell')
-# print(stdout.read().decode())
-# stdin, stdout, stderr = ssh.exec_command('pwd')
-# print(stdout.read().decode())
-# stdin, stdout, stderr = ssh.exec_command('touch /root/ouhu')
-# print(stdout.read().decode())
+def connect_to_remote_host(hostip, username='root', password='jacob'):
+    client = paramiko.client.SSHClient(
+    )  # A high-level representation of a session with an SSH server
+    client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
+    client.set_missing_host_key_policy(
+        paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
+    try:
+        client.connect(hostname=hostip, username=username, password=password, timeout=5)
+        for i in range(10):
+            print(i)
+            time.sleep(1)
 
-trans = paramiko.Transport(('192.168.1.252', 22))
-trans.start_client()
-trans.auth_password(username='root', password='jacob')
-channel = trans.open_session()
+        return client
+    except Exception as e:
+        print("连接服务器失败，错误信息：{}".format(e))
+        sys.exit()
 
 

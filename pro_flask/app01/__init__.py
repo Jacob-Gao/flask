@@ -7,5 +7,5 @@ app01 = Blueprint(
 
 )
 
-from .views.views import *
-
+from .views.initial_ecs import *
+from .views.get_log import *

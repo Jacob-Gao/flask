@@ -10,8 +10,12 @@ def connect_to_remote_host(hostip, username, password):
     client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
     client.set_missing_host_key_policy(
         paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
-    client.connect(hostname=hostip, username=username, password=password)
-    return client
+    try:
+        client.connect(hostname=hostip, username=username, password=password, timeout=5)
+        return client
+    except Exception as e:
+        print("连接服务器失败，错误信息：{}".format(e))
+        sys.exit()
 
 
 def excute_command(client, command):
@@ -73,26 +77,26 @@ def work_loop(y_host, y_user, y_passwd, host, t_user, t_passwd):
     client.close()
 
 
-def work_loop_test(y_host, y_user, y_passwd, host, t_user, t_passwd):
-    # upload initial.sh,next.sh,python3.6 package
-    client = connect_to_remote_host(hostip=y_host,
-                                    username=y_user,
-                                    password=y_passwd)
-
-    excute_command(
-        client=client,
-        command=
-        'cat /root/copy_jdk_shell/mark.txt > /root/copy_jdk_shell/copy_initial_shell.log 2>&1'
-        )  # yunwei machine log
-    client.close()
-    # excute initial.sh
-    client = connect_to_remote_host(hostip=host,
-                                    username=t_user,
-                                    password=t_passwd)
-    excute_command(client,
-                   command=
-                   'cat /root/mark.txt > /root/initial.log 2>&1')  # target machine log
-    client.close()
+# def work_loop_test(y_host, y_user, y_passwd, host, t_user, t_passwd):
+#     # upload initial.sh,next.sh,python3.6 package
+#     client = connect_to_remote_host(hostip=y_host,
+#                                     username=y_user,
+#                                     password=y_passwd)
+#
+#     excute_command(
+#         client=client,
+#         command=
+#         'cat /root/copy_jdk_shell/mark.txt > /root/copy_jdk_shell/copy_initial_shell.log 2>&1'
+#         )  # yunwei machine log
+#     client.close()
+#     # excute initial.sh
+#     client = connect_to_remote_host(hostip=host,
+#                                     username=t_user,
+#                                     password=t_passwd)
+#     excute_command(client,
+#                    command=
+#                    'cat /root/mark.txt > /root/initial.log 2>&1')  # target machine log
+#     client.close()
 
 def yunwei_log_catch(y_host, y_user, y_passwd):
     client = connect_to_remote_host(hostip=y_host,
@@ -157,31 +161,31 @@ def initial():
     return render_template('initial-ecs.html', yunwei_log=yunwei_log, target_machine_log=target_machine_log)
 
 
-@app01.route('/initial-ecs-test.html', methods=['GET', 'POST'])
-def initial_test():
-    if request.method == 'GET':
-        return render_template('initial-ecs.html')
-    else:
-        ip_address = request.form.get('ip_address')
-        hostlist = ip_address.split()
-        print(hostlist)
-        t_user = "root"
-        t_passwd = "jacob"
-        y_host = "192.168.1.253"
-        y_user = "root"
-        y_passwd = "jacob"
-        host_num = len(hostlist)
-        for i in range(host_num):
-            t = threading.Thread(name='process on {}'.format(hostlist[i]),
-                                target=work_loop_test,
-                                args=(y_host, y_user, y_passwd, hostlist[i],
-                                        t_user, t_passwd))
-            t.start()
-            t.join()
-
-    yunwei_log = yunwei_log_catch(y_host, y_user, y_passwd)
-    target_machine_log = ""
-    for i in range(host_num):
-        target_machine_log = target_machine_log_catch(hostlist[i], t_user, t_passwd,target_machine_log)
-
-    return render_template('initial-ecs.html', yunwei_log=yunwei_log, target_machine_log=target_machine_log)
+# @app01.route('/initial-ecs-test.html', methods=['GET', 'POST'])
+# def initial_test():
+#     if request.method == 'GET':
+#         return render_template('initial-ecs.html')
+#     else:
+#         ip_address = request.form.get('ip_address')
+#         hostlist = ip_address.split()
+#         print(hostlist)
+#         t_user = "root"
+#         t_passwd = "jacob"
+#         y_host = "192.168.1.253"
+#         y_user = "root"
+#         y_passwd = "jacob"
+#         host_num = len(hostlist)
+#         for i in range(host_num):
+#             t = threading.Thread(name='process on {}'.format(hostlist[i]),
+#                                 target=work_loop_test,
+#                                 args=(y_host, y_user, y_passwd, hostlist[i],
+#                                         t_user, t_passwd))
+#             t.start()
+#             t.join()
+#
+#     yunwei_log = yunwei_log_catch(y_host, y_user, y_passwd)
+#     target_machine_log = ""
+#     for i in range(host_num):
+#         target_machine_log = target_machine_log_catch(hostlist[i], t_user, t_passwd,target_machine_log)
+#
+#     return render_template('initial-ecs.html', yunwei_log=yunwei_log, target_machine_log=target_machine_log)
