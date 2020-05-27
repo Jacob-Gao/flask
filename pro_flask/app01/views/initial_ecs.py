@@ -2,7 +2,7 @@ from pro_flask.app01 import app01
 from flask import render_template, request
 import paramiko
 import threading
-import sys, os
+import sys, os,time
 
 
 def connect_to_remote_host(hostip, username, password):
@@ -12,12 +12,11 @@ def connect_to_remote_host(hostip, username, password):
     client.set_missing_host_key_policy(
         paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
     try:
-        client.connect(hostname=hostip, username=username, password=password, timeout=5)
+        client.connect(hostname=hostip, username=username, password=password, timeout=7)
         return client
     except Exception as e:
-        print("连接服务器失败，错误信息：{}".format(e))
-        sys.exit()
-
+        print("连接服务器{}失败，错误信息：{}".format(hostip, e))
+        sys.exit(1)
 
 def excute_command(client, command):
     try:
@@ -25,7 +24,8 @@ def excute_command(client, command):
 
     except Exception as e:
         client.close()
-        return e
+        print(e)
+        sys.exit(1)
     else:
         standout = stdout.read().decode()
         return standout
@@ -39,10 +39,10 @@ def work_loop(y_host, y_user, y_passwd, host, t_user, t_passwd):
     try:
         sftp.stat('/data/tinyplat/')
         print("*" * 100)
-        print("机器已经初始化过了，很有可能正在生产环境使用，请检查ip是否输入正确,ip地址为{}".format())
+        print("机器已经初始化过了，很有可能正在生产环境使用，请检查ip是否输入正确,ip地址为{}".format(host))
         print("*" * 100)
         client.close()
-        sys.exit()
+        sys.exit(1)
     except Exception as e:
         # upload initial.sh,next.sh,python3.6 package
         client = connect_to_remote_host(hostip=y_host,
@@ -151,27 +151,26 @@ def initial():
     else:
         ip_address = request.form.get('ip_address')
         hostlist = ip_address.split()
-        print(hostlist)
         t_user = "root"
         t_passwd = "jacob"
         y_host = "192.168.1.253"
         y_user = "root"
         y_passwd = "jacob"
         host_num = len(hostlist)
+        print(host_num)
         for i in range(host_num):
             t = threading.Thread(name='process on {}'.format(hostlist[i]),
                                  target=work_loop,
                                  args=(y_host, y_user, y_passwd, hostlist[i],
                                        t_user, t_passwd))
             t.start()
-            t.join()
 
-    yunwei_log = yunwei_log_catch(y_host, y_user, y_passwd)
-    target_machine_log = ""
-    for i in range(host_num):
-        target_machine_log = target_machine_log_catch(hostlist[i], t_user, t_passwd, target_machine_log)
-
-    return render_template('initial-ecs.html', yunwei_log=yunwei_log, target_machine_log=target_machine_log)
+        time.sleep(300)
+        yunwei_log = yunwei_log_catch(y_host, y_user, y_passwd)
+        target_machine_log = ""
+        for i in range(host_num):
+            target_machine_log = target_machine_log_catch(hostlist[i], t_user, t_passwd, target_machine_log)
+        return render_template('initial-ecs.html', yunwei_log=yunwei_log, target_machine_log=target_machine_log)
 
 # @app01.route('/initial-ecs-test.html', methods=['GET', 'POST'])
 # def initial_test():

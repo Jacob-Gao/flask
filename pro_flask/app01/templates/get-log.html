@@ -11,8 +11,20 @@
     <link href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="/static/css/dashboard.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
 </head>
 <body>
+<script src="/static/layui/layui.js"></script>
+
+<script>
+layui.use(['layer', 'form'], function(){
+  var layer = layui.layer
+  ,form = layui.form;
+  layer.open
+  layer.msg('Hello World');
+});
+</script>
+
 <div class="panel panel-success">
     <div class="panel-heading">
         <h3 class="panel-title">获取ECS日志</h3>
@@ -72,7 +84,7 @@
                    <textarea class="form-control" rows="10">请停在页面等待日志生成
                        {{ output }}
                        {% for message in get_flashed_messages() %}
-                            {{ message }}
+                           {{ message }}
                        {% endfor %}
                    </textarea>
             </div>

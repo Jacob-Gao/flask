@@ -10,11 +10,11 @@ def connect_to_remote_host(hostip, username='root', password='jacob'):
     client.set_missing_host_key_policy(
         paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
     try:
-        client.connect(hostname=hostip, username=username, password=password, timeout=5)
+        client.connect(hostname=hostip, username=username, password=password, timeout=3)
         return client
     except Exception as e:
         print("连接服务器失败，错误信息：{}".format(e))
-        sys.exit()
+        exit(1)
 
 
 def excute_command(client, command):
@@ -27,19 +27,29 @@ def excute_command(client, command):
         standout = stdout.read().decode('utf-8')
         return standout
 
-def work():
-    client = connect_to_remote_host('192.168.1.252')
-    sftp = client.open_sftp()
-    try:
-        sftp.stat('/data/tinyplat/')
-        print("*"*100)
-        print("机器已经初始化过了，很有可能正在生产环境使用，请检查ip是否输入正确,ip地址为{}".format(hostlist[0]))
-        print("*"*100)
-        client.close()
-        sys.exit()
-    except Exception as e:
-        print('执行初始化',e)
-        client.close()
+def action2(max):
+    for i in range(max):
+        if i == 30:
+            sys.exit(1)
+        print(threading.current_thread().getName()+ " "+str(i))
 
 
-work()
+def action(max):
+    for i in range(max):
+        print(threading.current_thread().getName()+ " "+str(i))
+
+threading.Thread(target=action, args=(80,), name="新线程").start()
+for i in range(100):
+    if i == 20:
+        jt = threading.Thread(
+                             target=action2,
+                             args=(80,),name="被join的线程"
+        )
+
+        jt.start()
+        jt.join()
+print(threading.current_thread().name + " " + str(i))
+print("子程序执行完了")
+
+
+

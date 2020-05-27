@@ -13,7 +13,7 @@ def connect_to_remote_host(hostip, username='root', password='jacob'):
         client.connect(hostname=hostip, username=username, password=password, timeout=5)
         return client
     except Exception as e:
-        print("连接服务器失败，错误信息：{}".format(e))
+        print("连接服务器{}失败，错误信息：{}".format(hostip, e))
         sys.exit()
 
 
