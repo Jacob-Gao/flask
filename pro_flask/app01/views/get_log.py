@@ -7,14 +7,14 @@ def connect_to_remote_host(hostip, username='root', password='jacob'):
     client = paramiko.client.SSHClient(
     )  # A high-level representation of a session with an SSH server
     client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
-    client.set_missing_host_key_policy(
-        paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
     try:
-        client.connect(hostname=hostip, username=username, password=password, timeout=5)
-        return client
+        client.connect(hostip, username=username, password=password, timeout=4)
     except Exception as e:
-        print("连接服务器{}失败，错误信息：{}".format(hostip, e))
-        sys.exit()
+        print(e)
+        sys.exit(1)
+    else:
+        return client
 
 
 def excute_command(client, command):
@@ -45,8 +45,7 @@ def get_log():
             client = connect_to_remote_host(ip_address)
 
         cmd = "tail -n {} {}".format(lines, log_path)
-        output = excute_command(client, 'tail -n 5 /var/messages')
-        flash('超时')
+        output = excute_command(client, cmd)
         client.close()
         print(output)
         return render_template('get-log.html', output=output)
