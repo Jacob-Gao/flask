@@ -10,7 +10,7 @@ def connect_to_remote_host(hostip, username, password):
     )  # A high-level representation of a session with an SSH server
     client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
-    client.connect(hostname=hostip, username=username, password=password, timeout=7)
+    client.connect(hostname=hostip, username=username, password=password, timeout=5)
     return client
 
 
@@ -117,7 +117,7 @@ def initial():
         faild_list = list()
         t_user = "root"
         t_passwd = "jacob"
-        y_host = "192.168.1.253"
+        y_host = "121.40.94.165"
         y_user = "root"
         y_passwd = "jacob"
 
@@ -146,7 +146,7 @@ def initial():
             try:
                 sftp.stat('/data/tinyplat/')
                 print("*" * 100)
-                print("机器已经初始化过了，很有可能正在生产环境使用，请检查ip是否输入正确,ip地址为{}")
+                print("机器已经初始化过了，很有可能正在生产环境使用，请检查ip是否输入正确,ip地址为{}".format(i))
                 print("*" * 100)
                 client.close()
                 hostlist.remove(i)
