@@ -18,6 +18,7 @@ def connect_to_remote_host(hostip, username, password):
         print("连接服务器{}失败，错误信息：{}".format(hostip, e))
         sys.exit(1)
 
+
 def excute_command(client, command):
     try:
         stdin, stdout, stderr = client.exec_command(command)
@@ -151,27 +152,66 @@ def initial():
     else:
         ip_address = request.form.get('ip_address')
         hostlist = ip_address.split()
+        faild_list = list()
         t_user = "root"
         t_passwd = "jacob"
         y_host = "192.168.1.253"
         y_user = "root"
         y_passwd = "jacob"
+
+        for i in hostlist:
+            try:
+                client = paramiko.client.SSHClient(
+                )  # A high-level representation of a session with an SSH server
+                client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
+                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
+                client.connect(i, username='root', password='jacob', timeout=4)
+            except Exception as e:
+                print(e)
+                faild_list.append(i)
+                print(faild_list)
+            finally:
+                client.close()
+
+        for i in faild_list:
+            hostlist.remove(i)
+
+        for i in hostlist:
+            client = paramiko.client.SSHClient()  # A high-level representation of a session with an SSH server
+            client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
+            client.connect(i, username='root', password='jacob', timeout=4)
+            sftp = client.open_sftp()
+            try:
+                sftp.stat('/data/tinyplat/')
+                print("*" * 100)
+                print("机器已经初始化过了，很有可能正在生产环境使用，请检查ip是否输入正确,ip地址为{}")
+                print("*" * 100)
+                client.close()
+                hostlist.remove(i)
+            except Exception as e:
+                print(e)
+                pass
+
         host_num = len(hostlist)
         print(host_num)
-        for i in range(host_num):
-            t = threading.Thread(name='process on {}'.format(hostlist[i]),
+        if host_num != 0:
+            for i in range(host_num):
+                t = threading.Thread(name='process on {}'.format(hostlist[i]),
                                  target=work_loop,
                                  args=(y_host, y_user, y_passwd, hostlist[i],
                                        t_user, t_passwd))
-            t.start()
-
-        time.sleep(300)
-        yunwei_log = yunwei_log_catch(y_host, y_user, y_passwd)
-        target_machine_log = ""
-        for i in range(host_num):
-            target_machine_log = target_machine_log_catch(hostlist[i], t_user, t_passwd, target_machine_log)
-        return render_template('initial-ecs.html', yunwei_log=yunwei_log, target_machine_log=target_machine_log)
-
+                t.start()
+            time.sleep(5)
+            yunwei_log = ""
+            # yunwei_log = yunwei_log_catch(y_host, y_user, y_passwd)
+            target_machine_log = ""
+            for i in range(host_num):
+                target_machine_log = target_machine_log_catch(hostlist[i], t_user, t_passwd, target_machine_log)
+            print("over")
+            return render_template('initial-ecs.html', yunwei_log=yunwei_log, target_machine_log=target_machine_log)
+        else:
+            return render_template("initial-ecs.html")
 # @app01.route('/initial-ecs-test.html', methods=['GET', 'POST'])
 # def initial_test():
 #     if request.method == 'GET':
