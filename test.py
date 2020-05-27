@@ -43,7 +43,6 @@ def check():
         except Exception as e:
             print(e)
             faild_list1.append(i)
-            print(faild_list1)
         finally:
                 client.close()
 
