@@ -22,8 +22,10 @@ def excute_command(client, command):
         client.close()
         print(e)
     else:
-        standout = stdout.read().decode()
-        return standout
+        standout = stdout.read().decode('utf-8')
+        stderr = stderr.read().decode('utf-8')
+        STR = standout + stderr
+        return STR
 
 
 def work_loop(y_host, y_user, y_passwd, host, t_user, t_passwd):
@@ -38,6 +40,7 @@ def work_loop(y_host, y_user, y_passwd, host, t_user, t_passwd):
         '/bin/bash /root/copy_jdk_shell/copy_initial_shell.sh {} > /root/copy_jdk_shell/copy_initial_shell.log 2>&1'
             .format(host))  # yunwei machine log
     client.close()
+    time.sleep(3)
 
     # excute initial.sh
     client = connect_to_remote_host(hostip=host,
@@ -58,6 +61,7 @@ def work_loop(y_host, y_user, y_passwd, host, t_user, t_passwd):
         '/bin/bash /root/copy_jdk_shell/copy_pak.sh {} >> /root/copy_jdk_shell/copy_initial_shell.log 2>&1'.format(
             host))
     client.close()
+    time.sleep(3)
     # excute next.sh
     client = connect_to_remote_host(hostip=host,
                                     username=t_user,
@@ -110,7 +114,7 @@ def target_machine_log_catch(host, t_user, t_passwd, log):
     return target_machine_log
 
 
-@app01.route('/index.html', methods=['GET', 'POST'])
+@app01.route('/', methods=['GET', 'POST'])
 def login():
     return render_template('index.html')
 
@@ -169,7 +173,6 @@ def initial():
             except Exception as e:
                 print(e)
                 client.close()
-                pass
 
         host_num = len(hostlist)
         print(hostlist)
@@ -180,7 +183,7 @@ def initial():
                                      args=(y_host, y_user, y_passwd, hostlist[i3],
                                            t_user, t_passwd))
                 t.start()
-            time.sleep(300)
+            time.sleep(280)
             transfer_sshkey(y_host,y_user,y_passwd,hostlist,check_chaoxie)
             yunwei_log = yunwei_log_catch(y_host, y_user, y_passwd)
             target_machine_log = ""

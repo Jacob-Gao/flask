@@ -73,7 +73,7 @@ import sys, threading, time
 #
 #
 # check()
-# print("**********************************")
+# print("*********************************")
 # print(hostlist)
 def connect_to_remote_host(hostip, username, password):
     client = paramiko.client.SSHClient(
