@@ -136,10 +136,10 @@ def initial():
         hostlist = ip_address.split()
         faild_list = list()
         t_user = "root"
-        t_passwd = "xY6#1WgBj2kR8l4fg"
-        y_host = "121.40.94.165"
+        t_passwd = "XXXXXXg"
+        y_host = "XXXXXX"
         y_user = "root"
-        y_passwd = "xY6#1WgBj2kR8l4fg"
+        y_passwd = "XXXXXXXX"
 
         for i1 in hostlist:
             try:
@@ -147,7 +147,7 @@ def initial():
                 )  # A high-level representation of a session with an SSH server
                 client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
                 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
-                client.connect(i1, username='root', password='xY6#1WgBj2kR8l4fg', timeout=4)
+                client.connect(i1, username='root', password='XXXXXX', timeout=4)
             except Exception as e:
                 print(e)
                 faild_list.append(i1)
@@ -161,7 +161,7 @@ def initial():
             client = paramiko.client.SSHClient()  # A high-level representation of a session with an SSH server
             client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
-            client.connect(i4, username='root', password='xY6#1WgBj2kR8l4fg', timeout=4)
+            client.connect(i4, username='root', password='xxxxxxxxxx', timeout=4)
             sftp = client.open_sftp()
             try:
                 sftp.stat('/data/tinyplat/')

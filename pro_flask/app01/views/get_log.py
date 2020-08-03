@@ -42,7 +42,7 @@ def get_log():
             )  # A high-level representation of a session with an SSH server
             client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
-            client.connect(ip_address, username='root', password='xY6#1WgBj2kR8l4fg', timeout=4)
+            client.connect(ip_address, username='root', password='XXXXX', timeout=4)
         except Exception as e:
             print(e)
             return render_template('get-log.html', output="输入的机器ip错误或者无法连接！")

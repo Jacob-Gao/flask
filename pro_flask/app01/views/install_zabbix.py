@@ -53,10 +53,10 @@ def install_zabbix():
         hostlist = ip_address.split()
         faild_list = list()
         # t_user = "root"
-        # t_passwd = "xY6#1WgBj2kR8l4fg"
-        y_host = "121.40.94.165"
+        # t_passwd = "XXXXXXXXXX"
+        y_host = "XXXXXXXXXX"
         y_user = "root"
-        y_passwd = "xY6#1WgBj2kR8l4fg"
+        y_passwd = "XXXXXXXXXX"
 
         for i1 in hostlist:
             try:
@@ -64,7 +64,7 @@ def install_zabbix():
                 )  # A high-level representation of a session with an SSH server
                 client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
                 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
-                client.connect(i1, username='root', password='xY6#1WgBj2kR8l4fg', timeout=4)
+                client.connect(i1, username='root', password='XXXXXXXXXX', timeout=4)
             except Exception as e:
                 print(e)
                 faild_list.append(i1)

@@ -3,7 +3,7 @@ from flask import render_template, request,flash
 import paramiko, sys
 from pro_flask.app01.tools.sendmail import send_mail
 
-def connect_to_remote_host(hostip, username='root', password='xY6#1WgBj2kR8l4fg'):
+def connect_to_remote_host(hostip, username='root', password='XXXXXXXXXX'):
     client = paramiko.client.SSHClient(
     )  # A high-level representation of a session with an SSH server
     client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说

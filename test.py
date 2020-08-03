@@ -75,24 +75,66 @@ import sys, threading, time
 # check()
 # print("*********************************")
 # print(hostlist)
-def connect_to_remote_host(hostip, username, password):
-    client = paramiko.client.SSHClient(
-    )  # A high-level representation of a session with an SSH server
-    client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
-    client.connect(hostname=hostip, username=username, password=password, timeout=5)
-    return client
+# def connect_to_remote_host(hostip, username, password):
+#     client = paramiko.client.SSHClient(
+#     )  # A high-level representation of a session with an SSH server
+#     client.load_system_host_keys()  # 读known hosts文件里的public key，没有再说
+#     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # 或者接受用WarningPolicy()
+#     client.connect(hostname=hostip, username=username, password=password, timeout=5)
+#     return client
+#
+#
+# def excute_command(client, command):
+#     try:
+#         stdin, stdout, stderr = client.exec_command(command)
+#
+#     except Exception as e:
+#         client.close()
+#         print(e)
+#     else:
+#         standout = stdout.read().decode()
+#         return standout
+
+# import logging
+#
+# def log(msg):
+#     logger = logging.getLogger("testlogger")
+#     logger.setLevel(logging.DEBUG)
+#
+#     fh = logging.FileHandler("logs/test.log",encoding="utf-8")
+#     sh = logging.StreamHandler()
+#
+#     formatter = logging.Formatter(
+#     fmt="%(levelname)s %(asctime)s %(name)s %(filename)s %(message)s",
+#     datefmt="%Y/%m/%d %X"
+#     )
+#
+#     fh.setFormatter(formatter)
+#     sh.setFormatter(formatter)
+#
+#     logger.addHandler(fh)
+#     logger.addHandler(sh)
+#     logger.info(msg)
+#
+#
+# log("dsafasdf")
+
+from flask import Flask, session
 
 
-def excute_command(client, command):
-    try:
-        stdin, stdout, stderr = client.exec_command(command)
+app = Flask(__name__)
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
-    except Exception as e:
-        client.close()
-        print(e)
-    else:
-        standout = stdout.read().decode()
-        return standout
+# Check Configuration section for more details
+app.config.from_object(__name__)
 
+@app.route('/set/')
+def set():
+    session['key'] = 'value'
+    return 'ok'
 
+@app.route('/get/')
+def get():
+    return session.get('key', 'not set')
+
+app.run()

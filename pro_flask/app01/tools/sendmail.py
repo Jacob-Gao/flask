@@ -8,8 +8,8 @@ from email.message import EmailMessage
 def send_mail(subject, content, mail):
     msg = EmailMessage()
     msg.set_content(content)
-    smtp_server = 'smtp.xiaoxiangyoupin.cn'
-    me = 'bj@xiaoxiangyoupin.cn'
+    smtp_server = 'smtp..cn'
+    me = 'cn'
     you = mail
 
     #三要素，标题，发送者，收件人
@@ -19,7 +19,7 @@ def send_mail(subject, content, mail):
 
     # Send the message via our own SMTP server.
     s = smtplib.SMTP_SSL(host=smtp_server, port=465)
-    s.login(user=me, password='Yuanshi@123')#我们的邮箱服务器邮件发送的时候要验证
+    s.login(user=me, password='3')#我们的邮箱服务器邮件发送的时候要验证
     try:
         s.send_message(msg)
     except Exception as e:
